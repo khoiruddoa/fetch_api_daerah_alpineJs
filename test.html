@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <title>belajar alpine js</title>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+
+  <body>
+    <h1>data provinsi</h1>
+    <div
+      x-data="{ provinsi: [],
+      id: 0 }"
+      x-init="fetch('https://dev.farizdotid.com/api/daerahindonesia/provinsi')
+              .then(response => response.json())
+              .then(data => provinsi = data.provinsi)"
+    >
+      <select x-on:change="id = $el.value">
+        <option value="">Pilih Provinsi</option>
+        <template x-for="prov in provinsi">
+          <option :value="prov.id">
+            <p x-text="prov.nama"></p>
+          </option>
+        </template>
+      </select>
+
+      <template x-if="id !== 0">
+        <div>
+          <h1>data Kabupaten</h1>
+          <div
+            x-data="{ kabupaten: [],
+            idkab:0 }"
+            x-effect="fetch('https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi='+id)
+                  .then(response => response.json())
+                  .then(data => kabupaten = data.kota_kabupaten)"
+          >
+            <select x-on:change="idkab = $el.value">
+              <option value="">Pilih Kabupaten</option>
+              <template x-for="kab in kabupaten">
+                <option :value="kab.id">
+                  <p x-text="kab.nama"></p>
+                </option>
+              </template>
+            </select>
+
+            <template x-if="idkab !== 0">
+              <div>
+                <h1>data Kecamatan</h1>
+                <div
+                  x-data="{ kecamatan: [],
+                  idkec:0}"
+                  x-effect="fetch('https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota='+idkab)
+                        .then(response => response.json())
+                        .then(data => kecamatan = data.kecamatan)"
+                >
+                  <select x-on:change="idkec = $el.value">
+                    <option value="">Pilih kecamatan</option>
+                    <template x-for="kec in kecamatan">
+                      <option :value="kec.id">
+                        <p x-text="kec.nama"></p>
+                      </option>
+                    </template>
+                  </select>
+
+                  <template x-if="idkec !== 0">
+                    <div>
+                      <h1>data Kelurahan</h1>
+                      <div
+                        x-data="{ kelurahan: []}"
+                        x-effect="fetch('https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan='+idkec)
+                              .then(response => response.json())
+                              .then(data => kelurahan = data.kelurahan)"
+                      >
+                        <select>
+                          <option value="">Pilih kelurahan</option>
+                          <template x-for="kel in kelurahan">
+                            <option :value="kel.id">
+                              <p x-text="kel.nama"></p>
+                            </option>
+                          </template>
+                        </select>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+  </body>
+</html>
